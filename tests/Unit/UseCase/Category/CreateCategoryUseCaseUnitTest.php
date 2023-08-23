@@ -18,6 +18,7 @@ class CreateCategoryUseCaseUnitTest extends TestCase
 {
     private $mockRepository;
     private $mockEntity;
+    private $mockCategoryCreateInputDto;
 
     public function testCreateNewCategory()
     {
@@ -33,16 +34,17 @@ class CreateCategoryUseCaseUnitTest extends TestCase
 
         $this->mockRepository = Mockery::mock(stdClass::class, CategoryRepositoryInterface::class);
         $this->mockRepository->shouldReceive('insert')
+            ->once()
             ->andReturn($this->mockEntity);
 
-        $mockCategoryCreateInputDto = Mockery::mock(CategoryCreateInputDto::class, [
+        $this->mockCategoryCreateInputDto = Mockery::mock(CategoryCreateInputDto::class, [
             $categoryName,
             $categoryDescription
         ]);
 
         $categoryUseCase = new CreateCategoryUseCase($this->mockRepository);
 
-        $responseUseCase = $categoryUseCase->execute($mockCategoryCreateInputDto);
+        $responseUseCase = $categoryUseCase->execute($this->mockCategoryCreateInputDto);
 
         $this->assertInstanceOf(CategoryCreateOutputDto::class, $responseUseCase);
         $this->assertEquals($categoryName, $responseUseCase->name);
